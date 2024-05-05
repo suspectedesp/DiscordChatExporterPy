@@ -4,21 +4,34 @@ from typing import List, Optional
 
 from chat_exporter.construct.transcript import Transcript
 from chat_exporter.ext.discord_import import discord
-from chat_exporter.construct.attachment_handler import AttachmentHandler, AttachmentToLocalFileHostHandler, AttachmentToDiscordChannelHandler
+from chat_exporter.construct.attachment_handler import (
+    AttachmentHandler,
+    AttachmentToLocalFileHostHandler,
+    AttachmentToDiscordChannelHandler,
+)
 
 
 async def quick_export(
     channel: discord.TextChannel,
     guild: Optional[discord.Guild] = None,
     bot: Optional[discord.Client] = None,
-):
+) -> Optional[discord.Message]:
     """
-    Create a quick export of your Discord channel.
-    This function will produce the transcript and post it back in to your channel.
-    :param channel: discord.TextChannel
-    :param guild: (optional) discord.Guild
-    :param bot: (optional) discord.Client
-    :return: discord.Message (posted transcript)
+    Create a Quick Transcript of your Discord channel.
+
+    Parameters
+    ----------
+    channel: :class:`discord.TextChannel`
+        The Channel to Export
+    guild: Optional[:class:`discord.Guild`]
+        The Guild to Export
+    bot: Optional[:class:`discord.Client`]
+        The Bot to use for getting member role colour
+
+    Returns
+    -------
+    Optional[:class:`discord.Message`]
+        The Sent Message
     """
 
     if guild:
@@ -36,19 +49,21 @@ async def quick_export(
             after=None,
             support_dev=True,
             bot=bot,
-            attachment_handler=None
-            ).export()
-        ).html
+            attachment_handler=None,
+        ).export()
+    ).html
 
     if not transcript:
         return
 
     transcript_embed = discord.Embed(
         description=f"**Transcript Name:** transcript-{channel.name}\n\n",
-        colour=discord.Colour.blurple()
+        colour=discord.Colour.blurple(),
     )
 
-    transcript_file = discord.File(io.BytesIO(transcript.encode()), filename=f"transcript-{channel.name}.html")
+    transcript_file = discord.File(
+        io.BytesIO(transcript.encode()), filename=f"transcript-{channel.name}.html"
+    )
     return await channel.send(embed=transcript_embed, file=transcript_file)
 
 
@@ -64,22 +79,39 @@ async def export(
     after: Optional[datetime.datetime] = None,
     support_dev: Optional[bool] = True,
     attachment_handler: Optional[AttachmentHandler] = None,
-):
+) -> str:
     """
-    Create a customised transcript of your Discord channel.
-    This function will return the transcript which you can then turn in to a file to post wherever.
-    :param channel: discord.TextChannel - channel to Export
-    :param limit: (optional) integer - limit of messages to capture
-    :param tz_info: (optional) TZ Database Name - set the timezone of your transcript
-    :param guild: (optional) discord.Guild - solution for edpy
-    :param bot: (optional) discord.Client - set getting member role colour
-    :param military_time: (optional) boolean - set military time (24hour clock)
-    :param fancy_times: (optional) boolean - set javascript around time display
-    :param before: (optional) datetime.datetime - allows before time for history
-    :param after: (optional) datetime.datetime - allows after time for history
-    :param attachment_handler: (optional) attachment_handler.AttachmentHandler - allows custom asset handling
-    :return: string - transcript file make up
+    Create a Customised Transcript of your Discord channel.
+
+    Parameters
+    ----------
+    channel: :class:`discord.TextChannel`
+        The Channel to Export
+    limit: Optional[:class:`int`]
+        The Limit of Messages to Export
+    tz_info: Optional[:class:`str`]
+        The Timezone of the Transcript
+    guild: Optional[:class:`discord.Guild`]
+        The Guild to Export
+    bot: Optional[:class:`discord.Client`]
+        The Bot to Use for Fetching Data
+    military_time: Optional[:class:`bool`]
+        Whether to Use Military Time (24 Hour Clock)
+    fancy_times: Optional[:class:`bool`]
+        Whether to Use Fancy Times (JavaScript)
+    before: Optional[:class:`datetime.datetime`]
+        The Date to Fetch Messages Before
+    after: Optional[:class:`datetime.datetime`]
+        The Date to Fetch Messages After
+    attachment_handler: Optional[:class:`AttachmentHandler`]
+        The Attachment Handler to Use
+
+    Returns
+    -------
+    :class:`str`
+        The HTML of the Transcript
     """
+
     if guild:
         channel.guild = guild
 
@@ -110,20 +142,35 @@ async def raw_export(
     fancy_times: Optional[bool] = True,
     support_dev: Optional[bool] = True,
     attachment_handler: Optional[AttachmentHandler] = None,
-):
+) -> str:
     """
-    Create a customised transcript with your own captured Discord messages
-    This function will return the transcript which you can then turn in to a file to post wherever.
-    :param channel: discord.TextChannel - channel to Export
-    :param messages: List[discord.Message] - list of Discord messages to export
-    :param tz_info: (optional) TZ Database Name - set the timezone of your transcript
-    :param guild: (optional) discord.Guild - solution for edpy
-    :param bot: (optional) discord.Client - set getting member role colour
-    :param military_time: (optional) boolean - set military time (24hour clock)
-    :param fancy_times: (optional) boolean - set javascript around time display
-    :param attachment_handler: (optional) AttachmentHandler - allows custom asset handling
-    :return: string - transcript file make up
+    Create a Customised Transcript of your Discord channel with Raw Messages.
+
+    Parameters
+    ----------
+    channel: :class:`discord.TextChannel`
+        The Channel to Export
+    messages: List[:class:`discord.Message`]
+        The Messages to Export
+    tz_info: Optional[:class:`str`]
+        The Timezone of the Transcript
+    guild: Optional[:class:`discord.Guild`]
+        The Guild to Export
+    bot: Optional[:class:`discord.Client`]
+        The Bot to Use for Fetching Data
+    military_time: Optional[:class:`bool`]
+        Whether to Use Military Time (24 Hour Clock)
+    fancy_times: Optional[:class:`bool`]
+        Whether to Use Fancy Times (JavaScript)
+    attachment_handler: Optional[:class:`AttachmentHandler`]
+        The Attachment Handler to Use
+
+    Returns
+    -------
+    :class:`str`
+        The HTML of the Transcript
     """
+
     if guild:
         channel.guild = guild
 
@@ -139,22 +186,30 @@ async def raw_export(
             after=None,
             support_dev=support_dev,
             bot=bot,
-            attachment_handler=attachment_handler
+            attachment_handler=attachment_handler,
         ).export()
     ).html
 
 
 async def quick_link(
-    channel: discord.TextChannel,
-    message: discord.Message
-):
+    channel: discord.TextChannel, guild: Optional[discord.Guild] = None
+) -> Optional[discord.Message]:
     """
-    Create a quick link for your transcript file.
-    This function will return an embed with a link to view the transcript online.
-    :param channel: discord.TextChannel
-    :param message: discord.Message
-    :return: discord.Message (posted link)
+    Return a Message with a Link to the Transcript of the Channel.
+
+    Parameters
+    ----------
+    channel: :class:`discord.TextChannel`
+        The Channel to Send the Link
+    message: :class:`discord.Message`
+        The Message to Export
+
+    Returns
+    -------
+    :class:`discord.Message`
+        The Sent Message
     """
+
     embed = discord.Embed(
         title="Transcript Link",
         description=(
@@ -166,13 +221,19 @@ async def quick_link(
     return await channel.send(embed=embed)
 
 
-async def link(
-    message: discord.Message
-):
+async def link(message: discord.Message) -> str:
     """
-    Returns a link which you can use to display in a message.
-    This function will return a string of the link.
-    :param message: discord.Message
-    :return: string (link: https://mahto.id/chat-exporter?url=ATTACHMENT_URL)
+    Return a Viewable Link to the Transcript of the Message.
+
+    Parameters
+    ----------
+    message: :class:`discord.Message`
+        The Message to Export
+
+    Returns
+    -------
+    :class:`str`
+        The Link to the Transcript
     """
+
     return "https://mahto.id/chat-exporter?url=" + message.attachments[0].url

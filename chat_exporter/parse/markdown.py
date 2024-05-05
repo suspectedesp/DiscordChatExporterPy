@@ -8,7 +8,6 @@ class ParseMarkdown:
         self.content = content
         self.code_blocks_content = []
 
-
     async def standard_message_flow(self):
         self.parse_code_block_markdown()
         self.https_http_links()
@@ -59,10 +58,22 @@ class ParseMarkdown:
 
     async def parse_emoji(self):
         holder = (
-            [r"&lt;:.*?:(\d*)&gt;", '<img class="emoji emoji--small" src="https://cdn.discordapp.com/emojis/%s.png">'],
-            [r"&lt;a:.*?:(\d*)&gt;", '<img class="emoji emoji--small" src="https://cdn.discordapp.com/emojis/%s.gif">'],
-            [r"<:.*?:(\d*)>", '<img class="emoji emoji--small" src="https://cdn.discordapp.com/emojis/%s.png">'],
-            [r"<a:.*?:(\d*)>", '<img class="emoji emoji--small" src="https://cdn.discordapp.com/emojis/%s.gif">'],
+            [
+                r"&lt;:.*?:(\d*)&gt;",
+                '<img class="emoji emoji--small" src="https://cdn.discordapp.com/emojis/%s.png">',
+            ],
+            [
+                r"&lt;a:.*?:(\d*)&gt;",
+                '<img class="emoji emoji--small" src="https://cdn.discordapp.com/emojis/%s.gif">',
+            ],
+            [
+                r"<:.*?:(\d*)>",
+                '<img class="emoji emoji--small" src="https://cdn.discordapp.com/emojis/%s.png">',
+            ],
+            [
+                r"<a:.*?:(\d*)>",
+                '<img class="emoji emoji--small" src="https://cdn.discordapp.com/emojis/%s.gif">',
+            ],
         )
 
         self.content = await convert_emoji([word for word in self.content])
@@ -72,30 +83,32 @@ class ParseMarkdown:
             match = re.search(p, self.content)
             while match is not None:
                 emoji_id = match.group(1)
-                self.content = self.content.replace(self.content[match.start():match.end()],
-                                                    r % emoji_id)
+                self.content = self.content.replace(
+                    self.content[match.start() : match.end()], r % emoji_id
+                )
                 match = re.search(p, self.content)
 
     def strip_preserve(self):
         p = r'<span class="chatlog__markdown-preserve">(.*)</span>'
-        r = '%s'
+        r = "%s"
 
         pattern = re.compile(p)
         match = re.search(pattern, self.content)
         while match is not None:
             affected_text = match.group(1)
-            self.content = self.content.replace(self.content[match.start():match.end()],
-                                                r % affected_text)
+            self.content = self.content.replace(
+                self.content[match.start() : match.end()], r % affected_text
+            )
             match = re.search(pattern, self.content)
 
     def order_list_markdown_to_html(self):
-        lines = self.content.split('\n')
-        html = ''
+        lines = self.content.split("\n")
+        html = ""
         indent_stack = [0]
         started = True
 
         for line in lines:
-            match = re.match(r'^(\s*)([-*])\s+(.+)$', line)
+            match = re.match(r"^(\s*)([-*])\s+(.+)$", line)
             if match:
                 indent, bullet, content = match.groups()
                 indent = len(indent)
@@ -105,14 +118,14 @@ class ParseMarkdown:
                     started = False
                 if indent % 2 == 0:
                     while indent < indent_stack[-1]:
-                        html += '</ul>\n'
+                        html += "</ul>\n"
                         indent_stack.pop()
                     if indent > indent_stack[-1]:
                         html += '<ul class="markup">\n'
                         indent_stack.append(indent)
                 else:
                     while indent + 1 < indent_stack[-1]:
-                        html += '</ul>\n'
+                        html += "</ul>\n"
                         indent_stack.pop()
                     if indent + 1 > indent_stack[-1]:
                         html += '<ul class="markup">\n'
@@ -121,15 +134,15 @@ class ParseMarkdown:
                 html += f'<li class="markup">{content.strip()}</li>\n'
             else:
                 while len(indent_stack) > 1:
-                    html += '</ul>'
+                    html += "</ul>"
                     indent_stack.pop()
                 if not started:
-                    html += '</ul>'
+                    html += "</ul>"
                     started = True
-                html += line + '\n'
+                html += line + "\n"
 
         while len(indent_stack) > 1:
-            html += '</ul>\n'
+            html += "</ul>\n"
             indent_stack.pop()
 
         self.content = html
@@ -138,14 +151,17 @@ class ParseMarkdown:
         self.order_list_markdown_to_html()
         holder = (
             [r"__(.*?)__", '<span style="text-decoration: underline">%s</span>'],
-            [r"\*\*(.*?)\*\*", '<strong>%s</strong>'],
-            [r"\*(.*?)\*", '<em>%s</em>'],
+            [r"\*\*(.*?)\*\*", "<strong>%s</strong>"],
+            [r"\*(.*?)\*", "<em>%s</em>"],
             [r"~~(.*?)~~", '<span style="text-decoration: line-through">%s</span>'],
-            [r"^###\s(.*?)\n", '<h3>%s</h1>'],
-            [r"^##\s(.*?)\n", '<h2>%s</h1>'],
-            [r"^#\s(.*?)\n", '<h1>%s</h1>'],
-            [r"\|\|(.*?)\|\|", '<span class="spoiler spoiler--hidden" onclick="showSpoiler(event, this)"> <span '
-                               'class="spoiler-text">%s</span></span>'],
+            [r"^###\s(.*?)\n", "<h3>%s</h1>"],
+            [r"^##\s(.*?)\n", "<h2>%s</h1>"],
+            [r"^#\s(.*?)\n", "<h1>%s</h1>"],
+            [
+                r"\|\|(.*?)\|\|",
+                '<span class="spoiler spoiler--hidden" onclick="showSpoiler(event, this)"> <span '
+                'class="spoiler-text">%s</span></span>',
+            ],
         )
 
         for x in holder:
@@ -155,7 +171,9 @@ class ParseMarkdown:
             match = re.search(pattern, self.content)
             while match is not None:
                 affected_text = match.group(1)
-                self.content = self.content.replace(self.content[match.start():match.end()], r % affected_text)
+                self.content = self.content.replace(
+                    self.content[match.start() : match.end()], r % affected_text
+                )
                 match = re.search(pattern, self.content)
 
         # > quote
@@ -190,9 +208,29 @@ class ParseMarkdown:
         self.content = new_content
 
     def parse_code_block_markdown(self, reference=False):
-        markdown_languages = ["asciidoc", "autohotkey", "bash", "coffeescript", "cpp", "cs", "css",
-                              "diff", "fix", "glsl", "ini", "json", "md", "ml", "prolog", "py",
-                              "tex", "xl", "xml", "js", "html"]
+        markdown_languages = [
+            "asciidoc",
+            "autohotkey",
+            "bash",
+            "coffeescript",
+            "cpp",
+            "cs",
+            "css",
+            "diff",
+            "fix",
+            "glsl",
+            "ini",
+            "json",
+            "md",
+            "ml",
+            "prolog",
+            "py",
+            "tex",
+            "xl",
+            "xml",
+            "js",
+            "html",
+        ]
         self.content = re.sub(r"\n", "<br>", self.content)
 
         # ```code```
@@ -205,27 +243,29 @@ class ParseMarkdown:
             for language in markdown_languages:
                 if affected_text.lower().startswith(language):
                     language_class = f"language-{language}"
-                    _, _, affected_text = affected_text.partition('<br>')
+                    _, _, affected_text = affected_text.partition("<br>")
 
             affected_text = self.return_to_markdown(affected_text)
 
             second_pattern = re.compile(r"^<br>|<br>$")
             second_match = re.search(second_pattern, affected_text)
             while second_match is not None:
-                affected_text = re.sub(r"^<br>|<br>$", '', affected_text)
+                affected_text = re.sub(r"^<br>|<br>$", "", affected_text)
                 second_match = re.search(second_pattern, affected_text)
             affected_text = re.sub("  ", "&nbsp;&nbsp;", affected_text)
 
             self.code_blocks_content.append(affected_text)
             if not reference:
                 self.content = self.content.replace(
-                    self.content[match.start():match.end()],
-                    '<div class="pre pre--multiline %s">%s</div>' % (language_class, f'%s{len(self.code_blocks_content)}')
+                    self.content[match.start() : match.end()],
+                    '<div class="pre pre--multiline %s">%s</div>'
+                    % (language_class, f"%s{len(self.code_blocks_content)}"),
                 )
             else:
                 self.content = self.content.replace(
-                    self.content[match.start():match.end()],
-                    '<span class="pre pre-inline">%s</span>' % f'%s{len(self.code_blocks_content)}'
+                    self.content[match.start() : match.end()],
+                    '<span class="pre pre-inline">%s</span>'
+                    % f"%s{len(self.code_blocks_content)}",
                 )
 
             match = re.search(pattern, self.content)
@@ -237,8 +277,11 @@ class ParseMarkdown:
             affected_text = match.group(1)
             affected_text = self.return_to_markdown(affected_text)
             self.code_blocks_content.append(affected_text)
-            self.content = self.content.replace(self.content[match.start():match.end()],
-                                                '<span class="pre pre-inline">%s</span>' % f'%s{len(self.code_blocks_content)}')
+            self.content = self.content.replace(
+                self.content[match.start() : match.end()],
+                '<span class="pre pre-inline">%s</span>'
+                % f"%s{len(self.code_blocks_content)}",
+            )
             match = re.search(pattern, self.content)
 
         # `code`
@@ -248,15 +291,20 @@ class ParseMarkdown:
             affected_text = match.group(1)
             affected_text = self.return_to_markdown(affected_text)
             self.code_blocks_content.append(affected_text)
-            self.content = self.content.replace(self.content[match.start():match.end()],
-                                                '<span class="pre pre-inline">%s</span>' % f'%s{len(self.code_blocks_content)}')
+            self.content = self.content.replace(
+                self.content[match.start() : match.end()],
+                '<span class="pre pre-inline">%s</span>'
+                % f"%s{len(self.code_blocks_content)}",
+            )
             match = re.search(pattern, self.content)
 
         self.content = re.sub(r"<br>", "\n", self.content)
 
     def reverse_code_block_markdown(self):
         for x in range(len(self.code_blocks_content)):
-            self.content = self.content.replace(f'%s{x + 1}', self.code_blocks_content[x])
+            self.content = self.content.replace(
+                f"%s{x + 1}", self.code_blocks_content[x]
+            )
 
     def parse_embed_markdown(self):
         # [Message](Link)
@@ -265,8 +313,10 @@ class ParseMarkdown:
         while match is not None:
             affected_text = match.group(1)
             affected_url = match.group(2)
-            self.content = self.content.replace(self.content[match.start():match.end()],
-                                                '<a href="%s">%s</a>' % (affected_url, affected_text))
+            self.content = self.content.replace(
+                self.content[match.start() : match.end()],
+                '<a href="%s">%s</a>' % (affected_url, affected_text),
+            )
             match = re.search(pattern, self.content)
 
         self.content = self.content.split("\n")
@@ -301,14 +351,14 @@ class ParseMarkdown:
 
     @staticmethod
     def order_list_html_to_markdown(content):
-        lines = content.split('<br>')
-        html = ''
+        lines = content.split("<br>")
+        html = ""
         ul_level = -1
 
         for line in lines:
             if '<ul class="markup">' in line:
                 ul_level += 1
-                line = line.replace('<ul class="markup">', '')
+                line = line.replace('<ul class="markup">', "")
                 if line != "":
                     html += line + "\n"
             elif "</ul>" in line:
@@ -329,17 +379,23 @@ class ParseMarkdown:
     def return_to_markdown(self, content):
         # content = self.order_list_html_to_markdown(content)
         holders = (
-            [r"<strong>(.*?)</strong>", '**%s**'],
-            [r"<em>([^<>]+)</em>", '*%s*'],
-            [r"<h1>([^<>]+)</h1>", '# %s'],
-            [r"<h2>([^<>]+)</h2>", '## %s'],
-            [r"<h3>([^<>]+)</h3>", '### %s'],
-            [r'<span style="text-decoration: underline">([^<>]+)</span>', '__%s__'],
-            [r'<span style="text-decoration: line-through">([^<>]+)</span>', '~~%s~~'],
-            [r'<div class="quote">(.*?)</div>', '> %s'],
-            [r'<span class="spoiler spoiler--hidden" onclick="showSpoiler\(event, this\)"> <span '
-             r'class="spoiler-text">(.*?)<\/span><\/span>', '||%s||'],
-            [r'<span class="unix-timestamp" data-timestamp=".*?" raw-content="(.*?)">.*?</span>', '%s']
+            [r"<strong>(.*?)</strong>", "**%s**"],
+            [r"<em>([^<>]+)</em>", "*%s*"],
+            [r"<h1>([^<>]+)</h1>", "# %s"],
+            [r"<h2>([^<>]+)</h2>", "## %s"],
+            [r"<h3>([^<>]+)</h3>", "### %s"],
+            [r'<span style="text-decoration: underline">([^<>]+)</span>', "__%s__"],
+            [r'<span style="text-decoration: line-through">([^<>]+)</span>', "~~%s~~"],
+            [r'<div class="quote">(.*?)</div>', "> %s"],
+            [
+                r'<span class="spoiler spoiler--hidden" onclick="showSpoiler\(event, this\)"> <span '
+                r'class="spoiler-text">(.*?)<\/span><\/span>',
+                "||%s||",
+            ],
+            [
+                r'<span class="unix-timestamp" data-timestamp=".*?" raw-content="(.*?)">.*?</span>',
+                "%s",
+            ],
         )
 
         for x in holders:
@@ -349,8 +405,9 @@ class ParseMarkdown:
             match = re.search(pattern, content)
             while match is not None:
                 affected_text = match.group(1)
-                content = content.replace(content[match.start():match.end()],
-                                          r % html.escape(affected_text))
+                content = content.replace(
+                    content[match.start() : match.end()], r % html.escape(affected_text)
+                )
                 match = re.search(pattern, content)
 
         pattern = re.compile(r'<a href="(.*?)">(.*?)</a>')
@@ -359,11 +416,14 @@ class ParseMarkdown:
             affected_url = match.group(1)
             affected_text = match.group(2)
             if affected_url != affected_text:
-                content = content.replace(content[match.start():match.end()],
-                                          '[%s](%s)' % (affected_text, affected_url))
+                content = content.replace(
+                    content[match.start() : match.end()],
+                    "[%s](%s)" % (affected_text, affected_url),
+                )
             else:
-                content = content.replace(content[match.start():match.end()],
-                                          '%s' % affected_url)
+                content = content.replace(
+                    content[match.start() : match.end()], "%s" % affected_url
+                )
             match = re.search(pattern, content)
 
         return content.lstrip().rstrip()

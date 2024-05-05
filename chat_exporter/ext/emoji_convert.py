@@ -37,7 +37,9 @@ import aiohttp
 from chat_exporter.ext.cache import cache
 
 
-cdn_fmt = "https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/{codepoint}.png"
+cdn_fmt = (
+    "https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/{codepoint}.png"
+)
 
 
 @cache()
@@ -72,9 +74,16 @@ async def convert(char):
             return char
         else:
             shortcode = emoji.demojize(char)
-            name = shortcode.replace(":", "").replace("_", " ").replace("selector", "").title()
+            name = (
+                shortcode.replace(":", "")
+                .replace("_", " ")
+                .replace("selector", "")
+                .title()
+            )
 
-    src = cdn_fmt.format(codepoint=await codepoint(["{cp:x}".format(cp=ord(c)) for c in char]))
+    src = cdn_fmt.format(
+        codepoint=await codepoint(["{cp:x}".format(cp=ord(c)) for c in char])
+    )
 
     if await valid_src(src):
         return f'<img class="emoji emoji--small" src="{src}" alt="{char}" title="{name}" aria-label="Emoji: {name}">'

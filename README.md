@@ -1,23 +1,7 @@
 <div align="center">
-
-[![Version][pypi-version]][pypi-url]
-[![Language][language-dom]][github-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![GPL License][license-shield]][license-url]
-
-
   <h2>DiscordChatExporterPy</h2>
-
   <p>
-    Export Discord chats with your discord.py (or fork) bots!
-    <br />
-    <a href="https://discord.mahto.id/">Join Discord</a>
-    ·
-    <a href="https://github.com/mahtoid/DiscordChatExporterPy/issues/new?assignees=&labels=bug&template=bug-report.yml">Report Bug</a>
-    ·
-    <a href="https://github.com/mahtoid/DiscordChatExporterPy/issues/new?assignees=&labels=enhancement&template=feature-request.yml">Request Feature</a>
+    Forked from <a href="https://github.com/mahtoid/DiscordChatExporterPy">mahtoid/DiscordChatExporterPy</a>
   </p>
 </div>
 
@@ -26,15 +10,13 @@
 
 To install the library to your virtual environment, for bot usage, run the command:
 ```sh 
-pip install chat-exporter
+pip install git+https://github.com/1337Syntax/DiscordChatExporterPy
 ```
 
 To clone the repository locally, run the command:
 ```sh
-git clone https://github.com/mahtoid/DiscordChatExporterPy
+git clone https://github.com/1337Syntax/DiscordChatExporterPy
 ```
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 ---
 ## Usage
@@ -462,17 +444,3 @@ It simply makes a request to the given URL and echos (prints) the content for yo
 *This project borrows CSS and HTML code from [Tyrrrz's C# DiscordChatExporter](https://github.com/Tyrrrz/DiscordChatExporter/) repository.*
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-<!-- LINK DUMP -->
-[pypi-version]: https://img.shields.io/pypi/v/chat-exporter?style=for-the-badge
-[pypi-url]: https://pypi.org/project/chat-exporter/
-[language-dom]: https://img.shields.io/github/languages/top/mahtoid/discordchatexporterpy?style=for-the-badge
-[forks-shield]: https://img.shields.io/github/forks/mahtoid/DiscordChatExporterPy?style=for-the-badge
-[forks-url]: https://github.com/mahtoid/DiscordChatExporterPy/
-[stars-shield]: https://img.shields.io/github/stars/mahtoid/DiscordChatExporterPy?style=for-the-badge
-[stars-url]: https://github.com/mahtoid/DiscordChatExporterPy/stargazers
-[issues-shield]: https://img.shields.io/github/issues/mahtoid/DiscordChatExporterPy?style=for-the-badge
-[issues-url]: https://github.com/mahtoid/DiscordChatExporterPy/issues
-[license-shield]: https://img.shields.io/github/license/mahtoid/DiscordChatExporterPy?style=for-the-badge
-[license-url]: https://github.com/mahtoid/DiscordChatExporterPy/blob/master/LICENSE
-[github-url]: https://github.com/mahtoid/DiscordChatExporterPy/

@@ -3,7 +3,9 @@ import os
 from chat_exporter.parse.mention import ParseMention
 from chat_exporter.parse.markdown import ParseMarkdown
 
-dir_path = os.path.abspath(os.path.join((os.path.dirname(os.path.realpath(__file__))), ".."))
+dir_path = os.path.abspath(
+    os.path.join((os.path.dirname(os.path.realpath(__file__))), "..")
+)
 
 PARSE_MODE_NONE = 0
 PARSE_MODE_NO_MARKDOWN = 1
@@ -65,8 +67,12 @@ meta_data_temp = read_file(dir_path + "/html/message/meta.html")
 # COMPONENTS
 component_button = read_file(dir_path + "/html/component/component_button.html")
 component_menu = read_file(dir_path + "/html/component/component_menu.html")
-component_menu_options = read_file(dir_path + "/html/component/component_menu_options.html")
-component_menu_options_emoji = read_file(dir_path + "/html/component/component_menu_options_emoji.html")
+component_menu_options = read_file(
+    dir_path + "/html/component/component_menu_options.html"
+)
+component_menu_options_emoji = read_file(
+    dir_path + "/html/component/component_menu_options_emoji.html"
+)
 
 # EMBED
 embed_body = read_file(dir_path + "/html/embed/body.html")
