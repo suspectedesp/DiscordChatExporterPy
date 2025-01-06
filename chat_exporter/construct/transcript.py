@@ -133,11 +133,7 @@ class TranscriptDAO:
             ("RAW_CHANNEL_TOPIC", str(raw_channel_topic))
         ])
 
-        sd = (
-            '<div class="meta__support">'
-            '    <a href="https://ko-fi.com/mahtoid">DONATE</a>'
-            '</div>'
-        ) if self.support_dev else ""
+        sd = ""
 
         _fancy_time = ""
 
